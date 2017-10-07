@@ -2,6 +2,8 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import game.Game;
+import game.GameModel;
 import game.GameView;
 import game.TextGuiRenderer;
 
@@ -10,6 +12,7 @@ import java.io.IOException;
 public class MainApp {
 
     public static void main(String[] args) {
+
         GameView gameView = new TextGuiRenderer();
         try {
             gameView.initialize();
