@@ -1,25 +1,33 @@
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
-import game.Game;
-import game.GameModel;
-import game.GameView;
-import game.TextGuiRenderer;
+import game.*;
+import models.*;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainApp {
 
     public static void main(String[] args) {
 
-        GameView gameView = new TextGuiRenderer();
-        try {
-            gameView.initialize();
-            System.out.println("abcd");
-        } catch(IOException exc) {
-            exc.printStackTrace();
-        }
+        GameModel model = new GameModel(
+                new GameMenu(Arrays.asList(MenuItem.QUIT, MenuItem.PLAY)),
+                new PlayerCar(50, CarColor.BLACK, CarLane.RIGHT),
+                new ArrayList<>()
+                );
+        GameController controller = GameController.getGameControllerInstance(model);
+
+        GameView gameView = new TextGuiRenderer(controller);
+
+        controller.setGameView(gameView);
+
+        Game game = new Game(model, gameView, controller);
+        game.run();
+
+//        try {
+//            gameView.initialize();
+//            System.out.println("abcd");
+//        } catch(IOException exc) {
+//            exc.printStackTrace();
+//        }
 
 
 //        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();

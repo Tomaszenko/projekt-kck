@@ -1,39 +1,25 @@
 package models;
 
-import game.CarColor;
-import game.CarDirection;
-
 public class Car {
-    private int width;
-    private int height;
+    private int km;
     private int speed;
+    private int maxSpeed;
     private CarColor carColor;
-    private CarDirection carDirection;
-    private Location location;
+    private CarLane carLane;
 
-    public Car(int width, int height, int speed, CarColor carColor, CarDirection carDirection, Location location) {
-        this.width = width;
-        this.height = height;
+    public Car(int km, int speed, CarColor carColor, CarLane carLane) {
+        this.km = km;
         this.speed = speed;
         this.carColor = carColor;
-        this.carDirection = carDirection;
-        this.location = location;
+        this.carLane = carLane;
     }
 
-    public int getWidth() {
-        return width;
+    public int getKm() {
+        return km;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
+    public void setKm(int km) {
+        this.km = km;
     }
 
     public int getSpeed() {
@@ -52,19 +38,23 @@ public class Car {
         this.carColor = carColor;
     }
 
-    public CarDirection getCarDirection() {
-        return carDirection;
+    public CarLane getCarLane() {
+        return carLane;
     }
 
-    public void setCarDirection(CarDirection carDirection) {
-        this.carDirection = carDirection;
+    public void setCarLane(CarLane carLane) {
+        this.carLane = carLane;
     }
 
-    public Location getLocation() {
-        return location;
+    public void accelerate() {
+        if (speed + 10 <= maxSpeed) {
+            speed += 10;
+        }
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void brake() {
+        if (speed - 10 > 0) {
+            speed -= 10;
+        }
     }
 }

@@ -2,35 +2,45 @@ package game;
 
 import java.io.IOException;
 
-public class Game implements Runnable {
+public class Game implements Runnable, MyExitListener {
+
+    private boolean exit = false;
     private GameModel gameModel;
     private GameView renderer;
-    private GameController controller;
+    private GameController gameController;
 
-    public Game(GameModel gameModel, GameView renderer, GameController controller) {
+    public Game(GameModel gameModel, GameView gameView, GameController gameController) {
         this.gameModel = gameModel;
-        this.renderer = renderer;
-        this.controller = controller;
+        this.renderer = gameView;
+        this.gameController = gameController;
     }
 
     @Override
     public void run() {
+        System.out.println("running game");
         try {
             initializeView(renderer);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        while(true) {
-            renderer.render(gameModel);
-            updateModel();
+        while(!exit) {
+            gameController.updateGame();
+            gameController.updateView();
+            try {
+                Thread.sleep(50);
+            } catch(InterruptedException exc) {
+                exc.printStackTrace();
+            }
         }
     }
 
-    private void initializeView(GameView gameView) throws IOException{
-        gameView.initialize();
+    @Override
+    public void exit() {
+
     }
-    private void updateModel() {
-        gameModel.update();
+
+    private void initializeView(GameView gameView) throws IOException, InterruptedException {
+        gameView.initialize();
     }
 }

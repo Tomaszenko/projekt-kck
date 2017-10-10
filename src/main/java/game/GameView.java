@@ -1,14 +1,22 @@
 package game;
 
-import game.GameModel;
-
 import java.io.IOException;
 
 public abstract class GameView {
+    private MyKeyListener keyListener;
 
-    private GameModel gameModel;
+    public GameView(MyKeyListener keyListener) {
+        this.keyListener = keyListener;
+    }
 
+    protected MyKeyListener getKeyListener() {
+        return keyListener;
+    }
 
-    public abstract void initialize() throws IOException;
-    public abstract void render(GameModel g);
+    public void setKeyListener(MyKeyListener listener) {
+        this.keyListener = listener;
+    }
+
+    public abstract void initialize() throws IOException, InterruptedException;
+    public abstract void render(GameModel model, GameState gameState);
 }
