@@ -1,0 +1,11 @@
+{
+  "distance": 680,
+  "roadsigns": {
+    "0": "Łódź",
+    "100": "Warszawa",
+    "300": "Białystok",
+    "400": "Wołkowysk",
+    "550": "Baranowicze",
+    "680": "Mińsk"
+  }
+}

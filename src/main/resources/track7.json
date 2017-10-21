@@ -1,0 +1,14 @@
+{
+  "distance": 1300,
+  "roadsigns": {
+    "0": "Kraków",
+    "80": "Katowice",
+    "200": "Ostrawa",
+    "350": "Brno",
+    "500": "Wiedeń",
+    "750": "Graz",
+    "900": "Wenecja",
+    "1000": "Padwa",
+    "1300": "Mediolan"
+  }
+}

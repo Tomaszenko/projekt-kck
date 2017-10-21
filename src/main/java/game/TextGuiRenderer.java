@@ -1,22 +1,30 @@
 package game;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
-import models.CarLane;
-import models.GameMenu;
+import models.*;
+import models.Menu;
 import models.MenuItem;
-import models.PlayerCar;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 public class TextGuiRenderer extends GameView {
 
+    private static int LINE_LENGTH = 4;
+
     private SwingTerminalFrame terminal;
+    private VariableDistanceRenderer variableDistanceRenderer;
+    private LineRenderer lineRenderer;
 
     public TextGuiRenderer(MyKeyListener keyListener) {
         super(keyListener);
@@ -70,8 +78,11 @@ public class TextGuiRenderer extends GameView {
         terminal.setVisible(true);
         terminal.setBackgroundColor(new TextColor.RGB(0,0,0));
         terminal.setForegroundColor(new TextColor.RGB(255,255,255));
+        terminal.setExtendedState(Frame.MAXIMIZED_BOTH);
         terminal.requestFocusInWindow();
         registerListeners();
+        variableDistanceRenderer = new VariableDistanceRenderer(terminal);
+        lineRenderer = new LineRenderer(terminal, LINE_LENGTH);
         Thread.sleep(1000);
     }
 
@@ -79,38 +90,98 @@ public class TextGuiRenderer extends GameView {
     public void render(GameModel model, GameState gameState) {
         terminal.setBackgroundColor(new TextColor.RGB(0, 0, 0));
         terminal.setForegroundColor(new TextColor.RGB(255, 255, 255));
-        terminal.clearScreen();
+        System.out.println("rendering all");
 
-        if(gameState == GameState.GAME) {
-            try {
-                renderRoad();
-                renderCar(model.getPlayerCar());
-            } catch (Exception exc) {
-                System.out.println("ups sorki");
-            }
-        } else {
-            if(gameState == GameState.MENU) {
+        switch(gameState) {
+            case GAME:
                 try {
-                    renderMenu(model.getMenuModel());
+                    terminal.clearScreen();
+                    renderDistance(model.getPlayerCar().getMetersFromStart(), model.getCurrentRoute().getDistance());
+                    renderSpeedometer(model.getPlayerCar().getSpeed());
+                    renderRoad(model);
+                    renderRoadSigns();
+                    variableDistanceRenderer.updateReferenceDistance(model.getPlayerCar().getMetersFromStart());
+                    variableDistanceRenderer.renderPlayerCar(model.getPlayerCar());
+                    variableDistanceRenderer.renderCars(model.getOtherCars());
+                    System.out.println(variableDistanceRenderer);
+                    terminal.flush();
+                } catch (Exception exc) {
+                    exc.printStackTrace();
+                }
+                break;
+            case MENU:
+                try {
+                    terminal.clearScreen();
+                    renderMenu(model.getMainMenu());
+                    terminal.flush();
                 } catch (Exception exc) {
                     System.out.println("ups sorki, wyświetlam menu");
                 }
-
-            }
+                break;
+            case COLLISION:
+                try {
+                    renderMessage("GAME OVER!!!");
+                    terminal.flush();
+                    terminal.setForegroundColor(new TextColor.RGB(255,255,255));
+                    renderMenu(model.getCollisionMenu());
+                    terminal.flush();
+                } catch(Exception exc) {
+                    System.out.println("ups sorki, wyswietlam menu");
+                }
+                break;
+            case FINISHED:
+                try {
+                    renderMenu(model.getTrackCompletedMenu());
+                    terminal.flush();
+                } catch (Exception exc) {
+                    System.out.println("ups sorki, wyswietlam menu");
+                }
+                break;
+            case TRACKS:
+                try {
+                    terminal.clearScreen();
+                    renderMenu(model.getTracksMenu());
+                    terminal.flush();
+                } catch(Exception exc) {
+                    System.out.println("ups sorki, wyświetlam trasy");
+                }
+                break;
         }
     }
 
-    private void renderMenu(GameMenu gameMenu) {
+    private void renderDistance(int distance, int total) throws IOException, URISyntaxException {
+        terminal.newTextGraphics().putString(
+                new TerminalPosition(2,2), "distance: "+
+                String.valueOf(distance) + "m/" + String.valueOf(total) + "m");
+    }
+
+    private void renderSpeedometer(int speed) {
+        terminal.newTextGraphics().putString(new TerminalPosition(2,4), "speed: "+String.valueOf(speed));
+    }
+
+    private void renderMessage(String text) {
+        int numColumns = howManyColumns();
+
+        int currentRow = 1;
+        int textWidth = text.length();
+
+        terminal.setForegroundColor(new TextColor.RGB(255,0,0));
+        terminal.newTextGraphics().putString(
+                new TerminalPosition((numColumns-textWidth)/2, 1),
+                text);
+    }
+
+    private void renderMenu(Menu menu) {
         int numColumns = howManyColumns();
         int numRows = howManyRows();
 
-        int currentRow = 1;
+        int currentRow = 3;
         int menuwidth = numColumns/2;
 
-        List<MenuItem> items = gameMenu.getGameMenuItems();
+        List<MenuItem> items = menu.getGameMenuItems();
 
         for(MenuItem menuItem: items) {
-            if(menuItem == gameMenu.getSelected())
+            if(menuItem == menu.getSelected())
                 renderSelectedMenuItem(menuItem, currentRow, menuwidth);
             else
                 renderMenuItem(menuItem, currentRow, menuwidth);
@@ -132,7 +203,7 @@ public class TextGuiRenderer extends GameView {
         terminal.setCursorPosition(beginOn, y+1);
         terminal.putCharacter('x');
 
-        terminal.newTextGraphics().putString(new TerminalPosition(beginOn + 1, y+1), menuItem.name());
+        terminal.newTextGraphics().putString(new TerminalPosition(beginOn + 1, y+1), menuItem.getName());
 
         terminal.setCursorPosition(endOn, y+1);
         terminal.putCharacter('x');
@@ -142,12 +213,13 @@ public class TextGuiRenderer extends GameView {
             terminal.putCharacter('x');
         }
 
-        terminal.flush();
+//        terminal.flush();
     }
 
     private void renderMenuItem(MenuItem menuItem, int y, int minWidth) {
 
         System.out.println("COLUMNS="+howManyColumns());
+        System.out.println("ROWS="+howManyRows());
         int beginOn = (howManyColumns() - minWidth)/2;
         System.out.println("begin="+beginOn);
         int endOn = (howManyColumns() + minWidth)/2;
@@ -161,7 +233,7 @@ public class TextGuiRenderer extends GameView {
         terminal.setCursorPosition(beginOn, y+1);
         terminal.putCharacter('|');
 
-        terminal.newTextGraphics().putString(new TerminalPosition(beginOn + 1, y+1), menuItem.name());
+        terminal.newTextGraphics().putString(new TerminalPosition(beginOn + 1, y+1), menuItem.getName());
 
         terminal.setCursorPosition(endOn, y+1);
         terminal.putCharacter('|');
@@ -171,28 +243,22 @@ public class TextGuiRenderer extends GameView {
             terminal.putCharacter('-');
         }
 
-        terminal.flush();
+//        terminal.flush();
     }
 
-    private void renderCar(PlayerCar car) throws IOException {
-        System.out.println("rendering car");
-        int numColumns = howManyColumns();
-        int numRows = howManyRows();
-
-        if(car.getCarLane()== CarLane.LEFT)
-            renderPlayerCar(numColumns/2 - 5,numRows - 4);
-        else
-            renderPlayerCar(numColumns/2 + 5,numRows - 4);
-    }
-
-    private void renderRoad() throws IOException {
+    private void renderRoad(GameModel model) throws IOException {
         int numColumns = howManyColumns();
         int numRows = howManyRows();
 
         renderVerticalLine(numColumns/2 - 10);
         renderVerticalLine(numColumns/2 + 10);
         renderInterruptedLine(numColumns/2);
-        terminal.flush();
+        lineRenderer.update(model.getPlayerCar().getSpeed()/20);
+//        terminal.flush();
+    }
+
+    private void renderRoadSigns() throws IOException {
+
     }
 
     private void renderVerticalLine(int xPos) throws IOException {
@@ -208,32 +274,13 @@ public class TextGuiRenderer extends GameView {
         int numRows = howManyRows();
         int lenLine = 4;
 
-        for(int i=0; i!=numRows; ++i) {
-            terminal.setCursorPosition(xPos, i);
-            if(i/lenLine%2 == 0)
-                terminal.putCharacter('|');
-        }
-    }
+        lineRenderer.render(howManyColumns(), howManyRows());
 
-    private void renderPlayerCar(int x, int y) throws IOException {
-        terminal.setCursorPosition(x-1, y);
-        terminal.putCharacter('[');
-        terminal.setCursorPosition(x, y);
-        terminal.putCharacter('^');
-        terminal.setCursorPosition(x+1, y);
-        terminal.putCharacter(']');
-        terminal.setCursorPosition(x, y+1);
-        terminal.putCharacter('I');
-        terminal.setCursorPosition(x, y+2);
-        terminal.putCharacter('O');
-        terminal.setCursorPosition(x-1, y+3);
-        terminal.putCharacter('[');
-        terminal.setCursorPosition(x, y+3);
-        terminal.putCharacter('-');
-        terminal.setCursorPosition(x+1, y+3);
-        terminal.putCharacter(']');
-        terminal.flush();
-        System.out.println("out from rendering car");
+//        for(int i=0; i!=numRows; ++i) {
+//            terminal.setCursorPosition(xPos, i);
+//            if(i/lenLine%2 == 0)
+//                terminal.putCharacter('|');
+//        }
     }
 
     private int howManyColumns() {
@@ -243,6 +290,4 @@ public class TextGuiRenderer extends GameView {
     private int howManyRows() {
         return terminal.getTerminalSize().getRows();
     }
-
-
 }

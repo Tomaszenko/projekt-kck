@@ -2,17 +2,21 @@ package models;
 
 import java.util.List;
 
-public class GameMenu {
+public class Menu<T extends MenuItem> {
     private int position;
-    private List<MenuItem> gameMenuItems;
+    private List<T> menuItems;
 
-    public GameMenu(List<MenuItem> gameMenuItems) {
+    public Menu(List<T> menuItems) {
         this.position = 0;
-        this.gameMenuItems = gameMenuItems;
+        this.menuItems = menuItems;
     }
 
-    public MenuItem getSelected() {
-        return gameMenuItems.get(position);
+    public T getSelected() {
+        return menuItems.get(position);
+    }
+
+    public int getPosition() {
+        return this.position;
     }
 
     public void setPosition(int position) {
@@ -27,11 +31,11 @@ public class GameMenu {
         this.position = ++position < menuSize() ? position : 0;
     }
 
-    public List<MenuItem> getGameMenuItems() {
-        return gameMenuItems;
+    public List<T> getGameMenuItems() {
+        return menuItems;
     }
 
     private int menuSize() {
-        return gameMenuItems.size();
+        return menuItems.size();
     }
 }

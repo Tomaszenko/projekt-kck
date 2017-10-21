@@ -1,0 +1,12 @@
+{
+  "distance": 1300,
+  "roadsigns": {
+    "0": "Warszawa",
+    "150": "Lublin",
+    "250": "Zamość",
+    "400": "Lwów",
+    "500": "Tarnopol",
+    "900": "Winnica",
+    "1300": "Odessa"
+  }
+}

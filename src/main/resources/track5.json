@@ -1,0 +1,17 @@
+{
+  "distance": 2400,
+  "roadsigns": {
+    "0": "Gdańsk",
+    "200": "Toruń",
+    "400": "Łódź",
+    "500": "Częstochowa",
+    "600": "Katowice",
+    "750": "Ostrawa",
+    "900": "Brno",
+    "1050": "Bratysława",
+    "1250": "Budapeszt",
+    "1550": "Belgrad",
+    "1900": "Sofia",
+    "2400": "Stambuł"
+  }
+}

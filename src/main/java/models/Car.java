@@ -1,25 +1,33 @@
 package models;
 
-public class Car {
-    private int km;
+public abstract class Car implements RenderableGameObject{
+    private int metersFromStart;
     private int speed;
     private int maxSpeed;
+    private int length;
+    private boolean destroyed;
     private CarColor carColor;
     private CarLane carLane;
+    private CarDirection carDirection;
 
-    public Car(int km, int speed, CarColor carColor, CarLane carLane) {
-        this.km = km;
+    public Car(int metersFromStart, int speed, CarColor carColor, CarLane carLane, CarDirection carDirection) {
+        this.metersFromStart = metersFromStart;
         this.speed = speed;
+        this.maxSpeed = 40;
+        this.length = 6;
+        this.destroyed = false;
         this.carColor = carColor;
         this.carLane = carLane;
+        this.carDirection = carDirection;
     }
 
-    public int getKm() {
-        return km;
+    @Override
+    public int getMetersFromStart() {
+        return metersFromStart;
     }
 
-    public void setKm(int km) {
-        this.km = km;
+    public void setMetersFromStart(int metersFromStart) {
+        this.metersFromStart = metersFromStart;
     }
 
     public int getSpeed() {
@@ -28,6 +36,14 @@ public class Car {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
     }
 
     public CarColor getCarColor() {
@@ -46,10 +62,24 @@ public class Car {
         this.carLane = carLane;
     }
 
+    public CarDirection getCarDirection() {
+        return carDirection;
+    }
+
+    public void setCarDirection(CarDirection carDirection) {
+        this.carDirection = carDirection;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
+    }
+
     public void accelerate() {
-        if (speed + 10 <= maxSpeed) {
-            speed += 10;
-        }
+        speed = Math.min(speed + Math.max((int)(((float)(maxSpeed-speed)/maxSpeed) * 10),1), maxSpeed);
     }
 
     public void brake() {

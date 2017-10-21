@@ -1,13 +1,18 @@
 package game;
 
 import models.CarLane;
-import models.MenuItem;
+import models.CollisionMenuItem;
+import models.MainMenuItem;
+import models.Route;
+import services.RouteService;
 
-import static game.GameState.GAME;
-import static game.GameState.MENU;
+import static game.GameState.*;
 
-public class GameController implements MyKeyListener {
-    private GameState gameState = GAME;
+public class GameController implements MyKeyListener, MyCollisionListener, MyFinishListener {
+
+    private boolean running = false;
+
+    private GameState gameState = MENU;
     private GameModel gameModel;
     private GameView gameView;
 
@@ -24,9 +29,13 @@ public class GameController implements MyKeyListener {
     }
 
     public void updateGame() {
-        if(gameState == GAME)
+        if(gameState == GAME && running)
             updateModel();
         updateView();
+    }
+
+    public GameState getGameState() {
+        return gameState;
     }
 
     public void setGameView(GameView gameView) {
@@ -34,7 +43,9 @@ public class GameController implements MyKeyListener {
     }
 
     public void updateView() {
+        System.out.println("controller updates view");
         gameView.render(gameModel, gameState);
+        System.out.println("controller updated view");
     }
 
     public void updateModel() {
@@ -68,7 +79,16 @@ public class GameController implements MyKeyListener {
                 accelerate();
                 break;
             case MENU:
-                gameModel.getMenuModel().setPreviousItem();
+                gameModel.getMainMenu().setPreviousItem();
+                break;
+            case TRACKS:
+                gameModel.getTracksMenu().setPreviousItem();
+                break;
+            case COLLISION:
+                gameModel.getCollisionMenu().setPreviousItem();
+                break;
+            case FINISHED:
+                gameModel.getTrackCompletedMenu().setPreviousItem();
                 break;
             default:
         }
@@ -81,7 +101,26 @@ public class GameController implements MyKeyListener {
                 brake();
                 break;
             case MENU:
-                gameModel.getMenuModel().setNextItem();
+                gameModel.getMainMenu().setNextItem();
+                break;
+            case TRACKS:
+                gameModel.getTracksMenu().setNextItem();
+                break;
+            case COLLISION:
+                gameModel.getCollisionMenu().setNextItem();
+                break;
+            case FINISHED:
+                gameModel.getTrackCompletedMenu().setNextItem();
+                break;
+            default:
+        }
+    }
+
+    @Override
+    public void space() {
+        switch(gameState) {
+            case GAME:
+                running = false;
                 break;
             default:
         }
@@ -91,11 +130,39 @@ public class GameController implements MyKeyListener {
     public void enter() {
         switch(gameState) {
             case MENU:
-                if(gameModel.getMenuModel().getSelected()== MenuItem.QUIT)
-                    quitGame();
-                else
-                    startGame();
+                MainMenuItem mainMenuItem = gameModel.getMainMenu().getSelected();
+                switch (mainMenuItem) {
+                    case QUIT:
+                        quitGame();
+                        break;
+                    case NEW_GAME:
+                        selectTracks();
+                        break;
+                }
                 break;
+            case TRACKS:
+                String filename = "track" + gameModel.getTracksMenu().getPosition() + ".json";
+                try {
+                    Route selectedRoute = RouteService.getRouteFromFile(filename);
+                    gameModel.setCurrentRoute(selectedRoute);
+                } catch (Exception exc) {
+                    exc.printStackTrace();
+                }
+                gameState = GAME;
+                running = true;
+                break;
+            case COLLISION:
+                CollisionMenuItem collisionMenuItem = gameModel.getCollisionMenu().getSelected();
+                switch (collisionMenuItem) {
+                    case GO_TO_MENU:
+                        goToMainMenu();
+                        break;
+                    case TRY_AGAIN:
+                        gameModel.setCurrentRoute(gameModel.getCurrentRoute());
+                        gameState = GAME;
+                        running = true;
+                        break;
+                }
             default:
                 break;
         }
@@ -105,21 +172,43 @@ public class GameController implements MyKeyListener {
     public void escape() {
         switch (gameState) {
             case GAME:
-                stopGame();
+                goToMainMenu();
                 break;
             case MENU:
                 quitGame();
+                break;
+            case TRACKS:
+                goToMainMenu();
+                break;
+            case COLLISION:
+                goToMainMenu();
+                break;
+            case FINISHED:
+                goToMainMenu();
                 break;
             default:
         }
     }
 
+    @Override
+    public void collision() {
+        updateView();
+        gameOver();
+    }
+
+    @Override
+    public void finish() {
+        wellDone();
+    }
+
     private void leftLane() {
         gameModel.getPlayerCar().setCarLane(CarLane.LEFT);
+        gameModel.checkForCollisionsNow();
     }
 
     private void rightLane() {
         gameModel.getPlayerCar().setCarLane(CarLane.RIGHT);
+        gameModel.checkForCollisionsNow();
     }
 
     private void accelerate() {
@@ -130,15 +219,25 @@ public class GameController implements MyKeyListener {
         gameModel.getPlayerCar().brake();
     }
 
-    private void startGame() {
+    private void playGame() {
         gameState = GAME;
     }
 
-    private void stopGame() {
+    private void selectTracks() {
+        gameState = TRACKS;
+    }
+
+    private void goToMainMenu() {
         gameState = MENU;
     }
 
-    public void quitGame() {
+    private void gameOver() {
+        gameState = COLLISION;
+    }
+
+    private void wellDone() { gameState = FINISHED; }
+
+    private void quitGame() {
         System.exit(0);
     }
 }

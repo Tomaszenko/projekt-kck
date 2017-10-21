@@ -1,0 +1,15 @@
+{
+  "distance": 1400,
+  "roadsigns": {
+    "0": "Wrocław",
+    "80": "Legnica",
+    "350": "Drezno",
+    "650": "Weimar",
+    "800": "Limburg",
+    "900": "Bonn",
+    "950": "Kolonia",
+    "980": "Akwizgran",
+    "1100": "Bruksela",
+    "1180": "Gandawa"
+  }
+}

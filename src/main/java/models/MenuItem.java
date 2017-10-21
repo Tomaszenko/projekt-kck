@@ -1,5 +1,5 @@
 package models;
 
-public enum MenuItem {
-    QUIT, PLAY
+public interface MenuItem {
+    public String getName();
 }

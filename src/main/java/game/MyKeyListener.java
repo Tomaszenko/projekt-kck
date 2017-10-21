@@ -5,6 +5,7 @@ public interface MyKeyListener {
     void right();
     void up();
     void down();
+    void space();
     void enter();
     void escape();
 }
