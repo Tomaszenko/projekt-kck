@@ -1,9 +1,6 @@
 package game;
 
-import models.CarLane;
-import models.CollisionMenuItem;
-import models.MainMenuItem;
-import models.Route;
+import models.*;
 import services.RouteService;
 
 import static game.GameState.*;
@@ -163,6 +160,20 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
                         running = true;
                         break;
                 }
+                break;
+            case FINISHED:
+                TrackCompletedMenuItem trackCompletedMenuItem = gameModel.getTrackCompletedMenu().getSelected();
+                switch (trackCompletedMenuItem) {
+                    case GO_TO_MENU:
+                        goToMainMenu();
+                        break;
+                    case TRY_AGAIN:
+                        gameModel.setCurrentRoute(gameModel.getCurrentRoute());
+                        gameState = GAME;
+                        running = true;
+                        break;
+                }
+                break;
             default:
                 break;
         }
@@ -198,6 +209,7 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
 
     @Override
     public void finish() {
+        updateView();
         wellDone();
     }
 

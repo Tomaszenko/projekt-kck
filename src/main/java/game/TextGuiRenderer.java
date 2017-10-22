@@ -99,7 +99,7 @@ public class TextGuiRenderer extends GameView {
                     renderDistance(model.getPlayerCar().getMetersFromStart(), model.getCurrentRoute().getDistance());
                     renderSpeedometer(model.getPlayerCar().getSpeed());
                     renderRoad(model);
-                    renderRoadSigns();
+                    variableDistanceRenderer.renderRoadSigns(model.getCurrentRoute().getRoadSigns());
                     variableDistanceRenderer.updateReferenceDistance(model.getPlayerCar().getMetersFromStart());
                     variableDistanceRenderer.renderPlayerCar(model.getPlayerCar());
                     variableDistanceRenderer.renderCars(model.getOtherCars());
@@ -131,6 +131,9 @@ public class TextGuiRenderer extends GameView {
                 break;
             case FINISHED:
                 try {
+                    renderMessage("TRACK COMPLETED!");
+                    terminal.flush();
+                    terminal.setForegroundColor(new TextColor.RGB(255,255,255));
                     renderMenu(model.getTrackCompletedMenu());
                     terminal.flush();
                 } catch (Exception exc) {
@@ -255,10 +258,6 @@ public class TextGuiRenderer extends GameView {
         renderInterruptedLine(numColumns/2);
         lineRenderer.update(model.getPlayerCar().getSpeed()/20);
 //        terminal.flush();
-    }
-
-    private void renderRoadSigns() throws IOException {
-
     }
 
     private void renderVerticalLine(int xPos) throws IOException {

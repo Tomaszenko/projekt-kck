@@ -31,6 +31,7 @@ public class GameModel {
     }
 
     public void reset() {
+        playerCar.setDestroyed(false);
         playerCar.setMetersFromStart(0);
         playerCar.setSpeed(20);
         playerCar.setCarLane(CarLane.RIGHT);
@@ -118,8 +119,10 @@ public class GameModel {
 //        checkForCollisionsAfterUpdate();
 
         if(!playerCar.isDestroyed()) {
-            if (playerCar.getMetersFromStart() > currentRoute.getDistance())
+            if (playerCar.getMetersFromStart() > currentRoute.getDistance()) {
+                playerCar.setMetersFromStart(currentRoute.getDistance());
                 finishListener.finish();
+            }
         }
     }
 
@@ -138,6 +141,8 @@ public class GameModel {
                 if ( (distanceCovered > otherCarDistanceFromStart) &&
                         (distanceCovered - playerCarLength < otherCarDistanceFromStart + otherCarLength) ) {
                     System.out.println("crash left now");
+                    playerCar.setDestroyed(true);
+                    car.setDestroyed(true);
                     collisionListener.collision();
                     break;
                 }
@@ -150,6 +155,8 @@ public class GameModel {
                 if ( (distanceCovered > otherCarDistanceFromStart - otherCarLength) &&
                         (distanceCovered - playerCarLength < otherCarDistanceFromStart) ) {
                     System.out.println("crash right now");
+                    playerCar.setDestroyed(true);
+                    car.setDestroyed(true);
                     collisionListener.collision();
                     break;
                 }
