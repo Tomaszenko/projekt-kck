@@ -2,8 +2,8 @@ package game;
 
 import models.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.print.attribute.standard.MediaSize;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameModel {
@@ -33,11 +33,13 @@ public class GameModel {
     public void reset() {
         playerCar.setDestroyed(false);
         playerCar.setMetersFromStart(0);
-        playerCar.setSpeed(20);
+        playerCar.setSpeed(10);
         playerCar.setCarLane(CarLane.RIGHT);
         playerCar.setCarColor(CarColor.BLUE);
         playerCar.setCarDirection(CarDirection.NORTH);
-        playerCar.setLength(6);
+        playerCar.setLength(60);
+        this.otherCars = new RandomCarsGenerator(0.5)
+                .generateRandomCarsForRoute(currentRoute);
     }
 
     public void setCollisionListener(MyCollisionListener collisionListener) {
@@ -48,7 +50,7 @@ public class GameModel {
         this.finishListener = finishListener;
     }
 
-    public Menu<MainMenuItem> getMainMenu() {
+    public MainMenu getMainMenu() {
         return mainMenu;
     }
 
@@ -56,7 +58,7 @@ public class GameModel {
         this.mainMenu = mainMenu;
     }
 
-    public Menu<TracksMenuItem> getTracksMenu() {
+    public TracksMenu getTracksMenu() {
         return tracksMenu;
     }
 
@@ -98,8 +100,15 @@ public class GameModel {
 
     public void setCurrentRoute(Route route) {
         this.currentRoute = route;
-        this.otherCars = new RandomCarsGenerator(0.5)
-                .generateRandomCarsForRoute(route);
+        currentRoute.setDistance(5*currentRoute.getDistance());
+        Map<Integer, String> map = currentRoute.getRoadSigns();
+        Map<Integer, String> newMap = new TreeMap<>();
+        for(int i: map.keySet()) {
+            newMap.put(5*i, map.get(i));
+        }
+        currentRoute.setRoadSigns(newMap);
+//        this.otherCars = new RandomCarsGenerator(0.5)
+//                .generateRandomCarsForRoute(route);
         reset();
     }
 
@@ -108,11 +117,61 @@ public class GameModel {
     }
 
     public void update() {
-        System.out.println("update");
+//        System.out.println("update");
         updateCar(playerCar);
 
-        for(Car otherCar: otherCars) {
-            updateCar(otherCar);
+        List<OtherCar> otherCarsLeft = otherCars.stream()
+                .filter((car)->car.getCarLane() == CarLane.LEFT)
+                .sorted((car1, car2)-> Integer.signum(car2.getMetersFromStart() - car1.getMetersFromStart()))
+                .collect(Collectors.toList());
+
+        List<OtherCar> otherCarsRight = otherCars.stream()
+                .filter((car)->car.getCarLane() == CarLane.RIGHT)
+                .sorted((car1, car2)-> Integer.signum(car1.getMetersFromStart() - car2.getMetersFromStart()))
+                .collect(Collectors.toList());
+
+
+        System.out.println("LEFT LANE");
+        for(int ind=0; ind!=otherCarsLeft.size(); ++ind) {
+            OtherCar car = otherCarsLeft.get(ind);
+            if(ind < otherCarsLeft.size() - 1) {
+                OtherCar nextCar = otherCarsLeft.get(ind+1);
+                int diff = car.getMetersFromStart() - nextCar.getMetersFromStart();
+                if(diff < 200 + Math.random()*10 - 5)
+                    car.brake(2);
+                else {
+                    if(diff < 300 + Math.random()*10 - 5)
+                        car.brake(1);
+                    else {
+                        if (diff > 1000 + Math.random() * 10 - 5)
+                            car.accelerate();
+                    }
+                }
+            }
+            System.out.println(car.getMetersFromStart());
+            updateCar(car);
+        }
+
+
+        System.out.println("RIGHT LANE");
+        for(int ind=0; ind!=otherCarsRight.size(); ++ind) {
+            OtherCar car = otherCarsRight.get(ind);
+            if(ind < otherCarsRight.size() - 1) {
+                OtherCar nextCar = otherCarsRight.get(ind+1);
+                int diff = nextCar.getMetersFromStart() - car.getMetersFromStart();
+                if(diff < 200 + Math.random()*10 - 50)
+                    car.brake(2);
+                else {
+                    if(diff < 300 + Math.random()*10 - 50)
+                        car.brake(1);
+                    else {
+                        if (diff > 1000 + Math.random() * 10 - 50)
+                            car.accelerate();
+                    }
+                }
+            }
+            System.out.println(car.getMetersFromStart());
+            updateCar(car);
         }
 
         checkForCollisionsNow();
@@ -187,7 +246,7 @@ public class GameModel {
 
                 if ( afterUpdateDistanceCovered > afterUpdateOtherPosition &&
                         afterUpdateDistanceCovered - playerCarLength <= afterUpdateOtherPosition + car.getLength()) {
-                    System.out.println("crash left update");
+//                    System.out.println("crash left update");
                     collisionListener.collision();
                     break;
                 }
@@ -197,7 +256,7 @@ public class GameModel {
                 int afterUpdateOtherPosition = checkAfterUpdatePosition(car);
 
                 if ( afterUpdateOtherPosition > afterUpdateDistanceCovered - playerCarLength ) {
-                    System.out.println("crash right update nearer");
+//                    System.out.println("crash right update nearer");
                     collisionListener.collision();
                     break;
                 }
@@ -208,7 +267,7 @@ public class GameModel {
                 int afterUpdateOtherPosition = checkAfterUpdatePosition(car);
 
                 if ( afterUpdateDistanceCovered > afterUpdateOtherPosition - otherCarLength ) {
-                    System.out.println("crash right update further");
+//                    System.out.println("crash right update further");
                     collisionListener.collision();
                     break;
                 }
@@ -229,7 +288,7 @@ public class GameModel {
     }
 
     private int deltaPositionChange(Car car) {
-        int result = (int)(car.getSpeed()/5);
+        int result = (int)(car.getSpeed());
         if(car.getCarDirection()==CarDirection.NORTH)
             return result;
         else

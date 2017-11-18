@@ -1,4 +1,4 @@
-package game;
+package game.text;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextColor;
@@ -11,13 +11,16 @@ import java.util.Map;
 
 public class VariableDistanceRenderer {
     private int refDistance;
-    private int refCarLength;
+    private int totalDistance;
     private SwingTerminalFrame terminal;
 
     public VariableDistanceRenderer(SwingTerminalFrame terminal) {
         this.refDistance = 0;
-        this.refCarLength = 6;
         this.terminal = terminal;
+    }
+
+    public void setTotalDistance(int totalDistance) {
+        this.totalDistance = totalDistance;
     }
 
     public void updateReferenceDistance(int currentDistance) {
@@ -48,7 +51,7 @@ public class VariableDistanceRenderer {
             else
                 renderBackwardsCar(car);
         }
-        System.out.println("out from rendering car");
+//        System.out.println("out from rendering car");
     }
 
     private void renderDestroyedCar(Car car) {
@@ -65,18 +68,10 @@ public class VariableDistanceRenderer {
             terminal.putCharacter('*');
             terminal.setCursorPosition(x + 1, y + 1);
             terminal.putCharacter('-');
-//            terminal.setCursorPosition(x - 1, y + 2);
-//            terminal.putCharacter('(');
-//            terminal.setCursorPosition(x + 1, y + 2);
-//            terminal.putCharacter(')');
             terminal.setCursorPosition(x, y + 2);
             terminal.putCharacter('|');
-//            terminal.setCursorPosition(x - 1, y + 3);
-//            terminal.putCharacter('\\');
             terminal.setCursorPosition(x, y + 3);
             terminal.putCharacter('|');
-//            terminal.setCursorPosition(x + 1, y + 3);
-//            terminal.putCharacter('/');
         }
 
         terminal.setForegroundColor(new TextColor.RGB(255,255,255));
@@ -85,7 +80,7 @@ public class VariableDistanceRenderer {
     private void renderForwardsCar(Car car) {
         int y = translateIntoPixelPosition(calculateRelativeY(car));
         int x = getXForCarLane(car.getCarLane());
-        System.out.println("y_car_right="+y);
+//        System.out.println("y_car_right="+y);
 
         if(y >=0 && y<= howManyRows() + 3) {
             terminal.setCursorPosition(x - 1, y);
@@ -110,7 +105,7 @@ public class VariableDistanceRenderer {
     private void renderBackwardsCar(Car car) {
         int y = translateIntoPixelPosition(calculateRelativeY(car));
         int x = getXForCarLane(car.getCarLane());
-        System.out.println("y_car_left="+y);
+//        System.out.println("y_car_left="+y);
 
         if(y >=0 && y<= howManyRows() + 3) {
             terminal.setCursorPosition(x - 1, y);
@@ -153,23 +148,28 @@ public class VariableDistanceRenderer {
             terminal.putCharacter('|');
             terminal.setCursorPosition(x + roadSign.getText().length()/2, y+3);
             terminal.putCharacter('|');
-//            terminal.setCursorPosition(x - 1, y);
-//            terminal.putCharacter('[');
-//            terminal.setCursorPosition(x, y);
-//            terminal.putCharacter('*');
-//            terminal.setCursorPosition(x + 1, y);
-//            terminal.putCharacter(']');
-//            terminal.setCursorPosition(x, y - 1);
-//            terminal.putCharacter('I');
-//            terminal.setCursorPosition(x, y - 2);
-//            terminal.putCharacter('O');
-//            terminal.setCursorPosition(x - 1, y - 3);
-//            terminal.putCharacter('[');
-//            terminal.setCursorPosition(x, y - 3);
-//            terminal.putCharacter('-');
-//            terminal.setCursorPosition(x + 1, y - 3);
-//            terminal.putCharacter(']');
         }
+    }
+
+    public void renderInterruptedLine(int currentDistance) {
+        int y = translateIntoPixelPosition((totalDistance - currentDistance)*2/3);
+        int x = howManyColumns()/2;
+
+        y = y % 8;
+
+        for(int i=y; i!=howManyRows(); ++i) {
+            terminal.setCursorPosition((int)(howManyColumns()/2), i);
+            if((i-y)/4%2 == 0)
+                terminal.putCharacter('|');
+        }
+
+        if(y > 4) {
+            for(int i=0; i!=(y-4); ++i) {
+                terminal.setCursorPosition((int)(howManyColumns()/2), i);
+                terminal.putCharacter('|');
+            }
+        }
+
     }
 
     private int calculateRelativeY(RenderableGameObject object) {
@@ -190,17 +190,15 @@ public class VariableDistanceRenderer {
     private TextColor convertCarColor(CarColor carColor) {
         switch(carColor) {
             case RED:
-                return new TextColor.RGB(255,0,0);
+                return new TextColor.RGB(255,100,100);
             case BLUE:
-                return new TextColor.RGB(0,0,255);
+                return new TextColor.RGB(100,100,255);
             case GREEN:
-                return new TextColor.RGB(0,255,0);
+                return new TextColor.RGB(100,255,100);
             case YELLOW:
-                return new TextColor.RGB(200,200,0);
+                return new TextColor.RGB(200,200,50);
             case PINK:
-                return new TextColor.RGB(200,0,100);
-            case WHITE:
-                return new TextColor.RGB(255,255,255);
+                return new TextColor.RGB(200,50,200);
             default:
                 return null;
         }

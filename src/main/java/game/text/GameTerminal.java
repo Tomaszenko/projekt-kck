@@ -1,4 +1,4 @@
-package game;
+package game.text;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;

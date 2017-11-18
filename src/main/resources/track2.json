@@ -1,12 +1,12 @@
 {
-  "distance": 870000,
+  "distance": 870,
   "roadsigns": {
     "0": "Kraków",
-    "80000": "Katowice",
-    "200000": "Ostrawa",
-    "350000": "Brno",
-    "500000": "Linz",
-    "650000": "Salzburg",
-    "870000": "Monachium"
+    "80": "Katowice",
+    "200": "Ostrawa",
+    "350": "Brno",
+    "500": "Linz",
+    "650": "Salzburg",
+    "870": "Monachium"
   }
 }

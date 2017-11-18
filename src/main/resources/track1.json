@@ -1,13 +1,13 @@
 {
-  "distance": 1200000,
+  "distance": 1200,
   "roadsigns": {
     "0": "Warszawa",
-    "150000": "Łomża",
-    "250000": "Augustów",
-    "300000": "Suwałki",
-    "500000": "Kowno",
-    "650000": "Dyneburg",
-    "900000": "Psków",
-    "1200000": "Sankt Petersburg"
+    "150": "Łomża",
+    "250": "Augustów",
+    "300": "Suwałki",
+    "500": "Kowno",
+    "650": "Dyneburg",
+    "900": "Psków",
+    "1200": "Sankt Petersburg"
   }
 }

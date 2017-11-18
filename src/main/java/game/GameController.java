@@ -3,6 +3,9 @@ package game;
 import models.*;
 import services.RouteService;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import static game.GameState.*;
 
 public class GameController implements MyKeyListener, MyCollisionListener, MyFinishListener {
@@ -25,7 +28,7 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
         this.gameModel = gameModel;
     }
 
-    public void updateGame() {
+    synchronized public void updateGame() {
         if(gameState == GAME && running)
             updateModel();
         updateView();
@@ -40,9 +43,9 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
     }
 
     public void updateView() {
-        System.out.println("controller updates view");
+//        System.out.println("controller updates view");
         gameView.render(gameModel, gameState);
-        System.out.println("controller updated view");
+//        System.out.println("controller updated view");
     }
 
     public void updateModel() {
@@ -127,7 +130,9 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
     public void enter() {
         switch(gameState) {
             case MENU:
+                System.out.println("Key pressed, juhu");
                 MainMenuItem mainMenuItem = gameModel.getMainMenu().getSelected();
+                System.out.println("item selected=" + mainMenuItem.getName());
                 switch (mainMenuItem) {
                     case QUIT:
                         quitGame();
@@ -138,9 +143,17 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
                 }
                 break;
             case TRACKS:
-                String filename = "track" + gameModel.getTracksMenu().getPosition() + ".json";
+                System.out.println("Track selected, juhu");
+                String filename = "track" + (gameModel.getTracksMenu().getPosition() + 1) + ".json";
                 try {
                     Route selectedRoute = RouteService.getRouteFromFile(filename);
+//                    selectedRoute.setDistance(5*selectedRoute.getDistance());
+//                    Map<Integer, String> map = selectedRoute.getRoadSigns();
+//                    Map<Integer, String> newMap = new TreeMap<>();
+//                    for(int i: map.keySet()) {
+//                        newMap.put(5*i, map.get(i));
+//                    }
+//                    selectedRoute.setRoadSigns(newMap);
                     gameModel.setCurrentRoute(selectedRoute);
                 } catch (Exception exc) {
                     exc.printStackTrace();
@@ -155,7 +168,8 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
                         goToMainMenu();
                         break;
                     case TRY_AGAIN:
-                        gameModel.setCurrentRoute(gameModel.getCurrentRoute());
+                        gameModel.reset();
+//                        gameModel.setCurrentRoute(gameModel.getCurrentRoute());
                         gameState = GAME;
                         running = true;
                         break;
@@ -168,7 +182,8 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
                         goToMainMenu();
                         break;
                     case TRY_AGAIN:
-                        gameModel.setCurrentRoute(gameModel.getCurrentRoute());
+                        gameModel.reset();
+//                        gameModel.setCurrentRoute(gameModel.getCurrentRoute());
                         gameState = GAME;
                         running = true;
                         break;
@@ -202,7 +217,7 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
     }
 
     @Override
-    public void collision() {
+    synchronized public void collision() {
         updateView();
         gameOver();
     }
@@ -213,12 +228,12 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
         wellDone();
     }
 
-    private void leftLane() {
+    synchronized private void leftLane() {
         gameModel.getPlayerCar().setCarLane(CarLane.LEFT);
         gameModel.checkForCollisionsNow();
     }
 
-    private void rightLane() {
+    synchronized private void rightLane() {
         gameModel.getPlayerCar().setCarLane(CarLane.RIGHT);
         gameModel.checkForCollisionsNow();
     }
@@ -228,7 +243,7 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
     }
 
     private void brake() {
-        gameModel.getPlayerCar().brake();
+        gameModel.getPlayerCar().brake(2);
     }
 
     private void playGame() {

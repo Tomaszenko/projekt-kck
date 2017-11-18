@@ -10,11 +10,11 @@ public abstract class Car implements RenderableGameObject{
     private CarLane carLane;
     private CarDirection carDirection;
 
-    public Car(int metersFromStart, int speed, CarColor carColor, CarLane carLane, CarDirection carDirection) {
+    public Car(int metersFromStart, int maxSpeed, int speed, CarColor carColor, CarLane carLane, CarDirection carDirection) {
         this.metersFromStart = metersFromStart;
         this.speed = speed;
-        this.maxSpeed = 40;
-        this.length = 6;
+        this.maxSpeed = maxSpeed;
+        this.length = 50;
         this.destroyed = false;
         this.carColor = carColor;
         this.carLane = carLane;
@@ -79,12 +79,11 @@ public abstract class Car implements RenderableGameObject{
     }
 
     public void accelerate() {
-        speed = Math.min(speed + Math.max((int)(((float)(maxSpeed-speed)/maxSpeed) * 10),1), maxSpeed);
+        speed = Math.min(speed + Math.max((int)(((float)(maxSpeed-speed)/maxSpeed) * 5),1), maxSpeed);
     }
 
-    public void brake() {
-        if (speed - 10 > 0) {
-            speed -= 10;
-        }
+    public void brake(int strength) {
+        if (speed - strength > 0)
+            speed -= strength;
     }
 }

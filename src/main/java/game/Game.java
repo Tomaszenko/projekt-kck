@@ -20,7 +20,7 @@ public class Game implements Runnable, MyExitListener {
 
     @Override
     public void run() {
-        System.out.println("running game");
+//        System.out.println("running game");
         try {
             initializeView(renderer);
         } catch (Exception e) {

@@ -1,4 +1,4 @@
-package game;
+package game.text;
 
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 

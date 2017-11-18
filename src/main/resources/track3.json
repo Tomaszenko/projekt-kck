@@ -1,15 +1,15 @@
 {
-  "distance": 1900000,
+  "distance": 1900,
   "roadsigns": {
     "0": "Łódź",
-    "250000": "Wrocław",
-    "300000": "Legnica",
-    "400000": "Drezno",
-    "750000": "Norymberga",
-    "950000": "Heidelberg",
-    "1100000": "Fryburg",
-    "1400000": "Lyon",
-    "1750000": "Awinion",
-    "1900000": "Marsylia"
+    "250": "Wrocław",
+    "300": "Legnica",
+    "400": "Drezno",
+    "750": "Norymberga",
+    "950": "Heidelberg",
+    "1100": "Fryburg",
+    "1400": "Lyon",
+    "1750": "Awinion",
+    "1900": "Marsylia"
   }
 }

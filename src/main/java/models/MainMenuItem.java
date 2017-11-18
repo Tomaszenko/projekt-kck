@@ -1,7 +1,7 @@
 package models;
 
 public enum MainMenuItem implements MenuItem{
-    QUIT, NEW_GAME, CONTINUE_GAME;
+    QUIT, NEW_GAME;
 
     @Override
     public String getName() {

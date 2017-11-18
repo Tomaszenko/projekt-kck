@@ -1,5 +1,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import game.*;
+import game.gui.GraphicsGuiRenderer;
+import game.text.TextGuiRenderer;
 import models.*;
 
 import java.io.IOException;
@@ -15,7 +17,7 @@ public class MainApp {
         Scanner sc = new Scanner(is);
         sc.useDelimiter("\\Z");
         String data = sc.next();
-        System.out.println(data);
+//        System.out.println(data);
         ObjectMapper objectMapper = new ObjectMapper();
         String[] choices = null;
         try {
@@ -26,6 +28,7 @@ public class MainApp {
 
         List<TracksMenuItem> tracksMenuItems = new ArrayList<>();
         for(String choice: choices) {
+            System.out.println(choice);
             tracksMenuItems.add(new TracksMenuItem(choice));
         }
 //        System.out.println("from: "+route.getFrom());
@@ -40,15 +43,16 @@ public class MainApp {
                 new CollisionMenu(Arrays.asList(CollisionMenuItem.GO_TO_MENU, CollisionMenuItem.TRY_AGAIN)),
                 new TrackCompletedMenu(Arrays.asList(TrackCompletedMenuItem.GO_TO_MENU, TrackCompletedMenuItem.TRY_AGAIN)),
                 new PlayerCar(20, CarColor.BLUE, CarLane.RIGHT),
-                Arrays.asList(
-                        new OtherCar(500, 10,  CarColor.WHITE, CarLane.LEFT, CarDirection.SOUTH),
-                        new OtherCar(400, 10,  CarColor.WHITE, CarLane.LEFT, CarDirection.SOUTH),
-                        new OtherCar(400, 10,  CarColor.RED, CarLane.RIGHT, CarDirection.NORTH)
-                        )
+                Arrays.asList()
                 );
         GameController controller = GameController.getGameControllerInstance(model);
 
-        GameView gameView = new TextGuiRenderer(controller);
+        GameView gameView = null;
+        boolean graphics = true;
+        if(graphics)
+            gameView = new GraphicsGuiRenderer(controller);
+        else
+            gameView = new TextGuiRenderer(controller);
 
         controller.setGameView(gameView);
 

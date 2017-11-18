@@ -15,28 +15,43 @@ public class RandomCarsGenerator {
 
     public List<OtherCar> generateRandomCarsForRoute(Route route) {
         int distance = route.getDistance();
-        int numCars = (int)(density * distance / 100);
+//        int numCars = (int)(density * distance / 100);
 
         List<OtherCar> result = new ArrayList<>();
-        for(int i=0; i!=numCars; ++i) {
+
+        int currentDistance = 0;
+
+        while(currentDistance < 2 * distance) {
             CarLane lane = generateRandomCarLane();
+
+            int nextDistance = generateRandomDistanceFromStart(currentDistance, distance);
+            int maxSpeed = generateRandomMaxSpeed();
+
             result.add(new OtherCar(
-                    generateRandomDistanceFromStart(distance),
-                    generateRandomSpeed(),
+                    nextDistance,
+                    maxSpeed,
+                    generateRandomSpeed(maxSpeed),
                     generateRandomColor(),
                     lane,
                     lane == CarLane.LEFT ? CarDirection.SOUTH : CarDirection.NORTH
-                    ));
+            ));
+
+            currentDistance = nextDistance;
         }
+
         return result;
     }
 
-    private int generateRandomDistanceFromStart(int totalDistance) {
-        return (int) (Math.random() * totalDistance);
+    private int generateRandomDistanceFromStart(int currentDistance, int totalDistance) {
+        return currentDistance + (int) ((Math.random()*0.03 + 0.02)*totalDistance);
     }
 
-    private int generateRandomSpeed() {
-        return (int)(Math.random()*20) + 10;
+    private int generateRandomMaxSpeed() {
+        return (int)(Math.random()*8) + 10;
+    }
+
+    private int generateRandomSpeed(int maxSpeed) {
+        return (int)(Math.random()*(maxSpeed-5)) + 5;
     }
 
     private CarColor generateRandomColor() {
