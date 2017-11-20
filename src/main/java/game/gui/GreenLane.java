@@ -17,6 +17,7 @@ public class GreenLane extends JPanel {
 
     public GreenLane(Map<Integer, String> roadSigns, int playerDistance) {
         super();
+        setBackground(new Color(20, 140, 30));
         this.roadSigns = roadSigns;
         this.playerDistance = playerDistance;
     }

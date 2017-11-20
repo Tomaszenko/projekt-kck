@@ -14,6 +14,9 @@ public class VariableDistanceRenderer {
     private int totalDistance;
     private SwingTerminalFrame terminal;
 
+    private static final int SCALE = 32;
+    private static final int CAR_PIXELS = 4;
+
     public VariableDistanceRenderer(SwingTerminalFrame terminal) {
         this.refDistance = 0;
         this.terminal = terminal;
@@ -173,7 +176,7 @@ public class VariableDistanceRenderer {
     }
 
     private int calculateRelativeY(RenderableGameObject object) {
-        return (int)Math.ceil((object.getMetersFromStart() - refDistance)*2/3);
+        return (int)Math.ceil((double)(object.getMetersFromStart() - refDistance)/SCALE);
     }
 
     private int getXForCarLane(CarLane carLane) {

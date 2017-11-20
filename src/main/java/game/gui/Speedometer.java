@@ -9,6 +9,7 @@ public class Speedometer extends JLabel {
 
     public Speedometer(String text) {
         super(text);
+        setFont(new Font("Arial", Font.BOLD, 20));
     }
 
     public Speedometer(int speed) {
@@ -32,7 +33,7 @@ public class Speedometer extends JLabel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        setText(makeTextOfSpeed(speed*10));
+        setText(makeTextOfSpeed(speed));
         super.paintComponent(g);
     }
 }

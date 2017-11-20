@@ -42,7 +42,7 @@ public class MainApp {
                 new TracksMenu(tracksMenuItems),
                 new CollisionMenu(Arrays.asList(CollisionMenuItem.GO_TO_MENU, CollisionMenuItem.TRY_AGAIN)),
                 new TrackCompletedMenu(Arrays.asList(TrackCompletedMenuItem.GO_TO_MENU, TrackCompletedMenuItem.TRY_AGAIN)),
-                new PlayerCar(20, CarColor.BLUE, CarLane.RIGHT),
+                new PlayerCar(100, CarColor.BLUE, CarLane.RIGHT),
                 Arrays.asList()
                 );
         GameController controller = GameController.getGameControllerInstance(model);

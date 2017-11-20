@@ -152,11 +152,11 @@ public class TextGuiRenderer extends GameView {
     private void renderDistance(int distance, int total) throws IOException, URISyntaxException {
         terminal.newTextGraphics().putString(
                 new TerminalPosition(2,2), "distance: "+
-                String.valueOf(distance/5) + "km/" + String.valueOf(total/5) + "km");
+                String.valueOf(distance/GameModel.internalLengthUnitSize) + "km/" + String.valueOf(total/GameModel.internalLengthUnitSize) + "km");
     }
 
     private void renderSpeedometer(int speed) {
-        terminal.newTextGraphics().putString(new TerminalPosition(2,4), "speed: "+String.valueOf(speed*10) + "km/h");
+        terminal.newTextGraphics().putString(new TerminalPosition(2,4), "speed: "+String.valueOf(speed) + "km/h");
     }
 
     private void renderMessage(String text) {

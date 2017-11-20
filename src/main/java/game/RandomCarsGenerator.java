@@ -47,11 +47,11 @@ public class RandomCarsGenerator {
     }
 
     private int generateRandomMaxSpeed() {
-        return (int)(Math.random()*8) + 10;
+        return (int)(Math.random()*80) + 100;
     }
 
     private int generateRandomSpeed(int maxSpeed) {
-        return (int)(Math.random()*(maxSpeed-5)) + 5;
+        return (int)(Math.random()*(maxSpeed-50)) + 50;
     }
 
     private CarColor generateRandomColor() {

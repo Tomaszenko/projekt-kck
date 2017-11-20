@@ -19,6 +19,8 @@ public class GameModel {
     private MyCollisionListener collisionListener;
     private MyFinishListener finishListener;
 
+    public static final int internalLengthUnitSize = 128;
+
     public GameModel(MainMenu mainMenu, TracksMenu tracksMenu,
                      CollisionMenu collisionMenu, TrackCompletedMenu trackCompletedMenu,
                      PlayerCar playerCar, List<OtherCar> otherCars) {
@@ -33,11 +35,10 @@ public class GameModel {
     public void reset() {
         playerCar.setDestroyed(false);
         playerCar.setMetersFromStart(0);
-        playerCar.setSpeed(10);
+        playerCar.setSpeed(100);
         playerCar.setCarLane(CarLane.RIGHT);
         playerCar.setCarColor(CarColor.BLUE);
         playerCar.setCarDirection(CarDirection.NORTH);
-        playerCar.setLength(60);
         this.otherCars = new RandomCarsGenerator(0.5)
                 .generateRandomCarsForRoute(currentRoute);
     }
@@ -100,11 +101,11 @@ public class GameModel {
 
     public void setCurrentRoute(Route route) {
         this.currentRoute = route;
-        currentRoute.setDistance(5*currentRoute.getDistance());
+        currentRoute.setDistance(currentRoute.getDistance()*internalLengthUnitSize);
         Map<Integer, String> map = currentRoute.getRoadSigns();
         Map<Integer, String> newMap = new TreeMap<>();
         for(int i: map.keySet()) {
-            newMap.put(5*i, map.get(i));
+            newMap.put(i*internalLengthUnitSize, map.get(i));
         }
         currentRoute.setRoadSigns(newMap);
 //        this.otherCars = new RandomCarsGenerator(0.5)
@@ -137,13 +138,13 @@ public class GameModel {
             if(ind < otherCarsLeft.size() - 1) {
                 OtherCar nextCar = otherCarsLeft.get(ind+1);
                 int diff = car.getMetersFromStart() - nextCar.getMetersFromStart();
-                if(diff < 200 + Math.random()*10 - 5)
+                if(diff < 512 + Math.random()*200 - 100)
                     car.brake(2);
                 else {
-                    if(diff < 300 + Math.random()*10 - 5)
+                    if(diff < 1024 + Math.random()*200 - 100)
                         car.brake(1);
                     else {
-                        if (diff > 1000 + Math.random() * 10 - 5)
+                        if (diff > 2048 + Math.random() * 200 - 100)
                             car.accelerate();
                     }
                 }
@@ -159,13 +160,13 @@ public class GameModel {
             if(ind < otherCarsRight.size() - 1) {
                 OtherCar nextCar = otherCarsRight.get(ind+1);
                 int diff = nextCar.getMetersFromStart() - car.getMetersFromStart();
-                if(diff < 200 + Math.random()*10 - 50)
+                if(diff < 512 + Math.random()*200 - 100)
                     car.brake(2);
                 else {
-                    if(diff < 300 + Math.random()*10 - 50)
+                    if(diff < 1024 + Math.random()*200 - 100)
                         car.brake(1);
                     else {
-                        if (diff > 1000 + Math.random() * 10 - 50)
+                        if (diff > 2048 + Math.random() * 200 - 100)
                             car.accelerate();
                     }
                 }
@@ -199,6 +200,7 @@ public class GameModel {
 
                 if ( (distanceCovered > otherCarDistanceFromStart) &&
                         (distanceCovered - playerCarLength < otherCarDistanceFromStart + otherCarLength) ) {
+                    car.setMetersFromStart(distanceCovered);
                     System.out.println("crash left now");
                     playerCar.setDestroyed(true);
                     car.setDestroyed(true);
@@ -213,6 +215,7 @@ public class GameModel {
 
                 if ( (distanceCovered > otherCarDistanceFromStart - otherCarLength) &&
                         (distanceCovered - playerCarLength < otherCarDistanceFromStart) ) {
+                    playerCar.setMetersFromStart(car.getMetersFromStart() - internalLengthUnitSize);
                     System.out.println("crash right now");
                     playerCar.setDestroyed(true);
                     car.setDestroyed(true);
