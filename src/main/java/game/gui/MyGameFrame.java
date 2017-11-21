@@ -32,8 +32,8 @@ public class MyGameFrame extends JFrame {
     private GameOverPanel gameOverPanel;
     private TrackCompletedPanel trackCompletedPanel;
 
-    private static final int CAR_PIXELS = 64;
-    private static final int SCALE = 2;
+    public static final int CAR_PIXELS = 64;
+    public static final int SCALE = GameModel.internalLengthUnitSize/CAR_PIXELS;
 
     public MyGameFrame( String title )
     {
@@ -209,14 +209,14 @@ public class MyGameFrame extends JFrame {
         PlayerCar playerCar = gameModel.getPlayerCar();
 
         road = new Road(gameModel.getOtherCars().stream().filter(
-                car -> { return getMetersInScale(car, SCALE) < getMetersInScale(playerCar, 2) + getHeight() - CAR_PIXELS
+                car -> { return getMetersInScale(car, SCALE) < getMetersInScale(playerCar, SCALE) + getHeight() - CAR_PIXELS
                         && getMetersInScale(car, SCALE) >= getMetersInScale(car, SCALE) - CAR_PIXELS; })
                 .collect(Collectors.toList()), playerCar);
         road.setSize(130, getContentPane().getHeight());
         road.setLocation(getContentPane().getWidth()/2 - CAR_PIXELS - 1, 0);
 
         greenLane = new GreenLane(gameModel.getCurrentRoute().getRoadSigns(), playerCar.getMetersFromStart());
-        greenLane.setSize(100, getContentPane().getHeight());
+        greenLane.setSize(250, getContentPane().getHeight());
         greenLane.setLocation((int)(0.65*getContentPane().getWidth()), 0);
 
         getContentPane().add(speedometer);
@@ -240,8 +240,8 @@ public class MyGameFrame extends JFrame {
 //        getContentPane().add(roadLeft);
 //        getContentPane().add(roadRight);
 
-//        ImageIcon iconUp = createImageIcon("car_up.png");
-//        ImageIcon iconDown = createImageIcon("car_down.png");
+//        ImageIcon iconUp = createImageIcon("car_green_up.png");
+//        ImageIcon iconDown = createImageIcon("car_green_down.png");
 //
 //        JLabel playerCar = new JLabel("Gracz", iconUp, JLabel.CENTER);
 //        playerCar.setSize(50,50);
@@ -310,7 +310,7 @@ public class MyGameFrame extends JFrame {
                             && (getMetersInScale(car, SCALE) >= getMetersInScale(playerCar, SCALE) - CAR_PIXELS); })
                 .collect(Collectors.toList()), playerCar);
 
-        greenLane.updateSigns(gameModel.getCurrentRoute().getRoadSigns(), playerCar.getMetersFromStart());
+        greenLane.updateSigns(playerCar.getMetersFromStart());
 
 
         getContentPane().repaint();

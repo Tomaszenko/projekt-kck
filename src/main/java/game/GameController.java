@@ -238,12 +238,12 @@ public class GameController implements MyKeyListener, MyCollisionListener, MyFin
         gameModel.checkForCollisionsNow();
     }
 
-    private void accelerate() {
+    synchronized void accelerate() {
         gameModel.getPlayerCar().accelerate();
     }
 
-    private void brake() {
-        gameModel.getPlayerCar().brake(2);
+    synchronized void brake() {
+        gameModel.getPlayerCar().brake(10);
     }
 
     private void playGame() {

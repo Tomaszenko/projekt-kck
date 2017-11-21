@@ -34,7 +34,7 @@ public class Game implements Runnable, MyExitListener {
 //            gameController.updateView();
 //            System.out.println("after update");
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
             } catch(InterruptedException exc) {
                 exc.printStackTrace();
             }

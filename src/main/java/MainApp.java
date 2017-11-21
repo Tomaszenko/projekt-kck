@@ -48,7 +48,16 @@ public class MainApp {
         GameController controller = GameController.getGameControllerInstance(model);
 
         GameView gameView = null;
+
         boolean graphics = true;
+
+        Scanner userInput = new Scanner(System.in);
+        String c = userInput.next();
+        if(c.equals("t"))
+            graphics = false;
+        else
+            graphics = true;
+
         if(graphics)
             gameView = new GraphicsGuiRenderer(controller);
         else

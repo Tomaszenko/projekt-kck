@@ -22,13 +22,17 @@ public class GreenLane extends JPanel {
         this.playerDistance = playerDistance;
     }
 
-    public void updateSigns(Map<Integer, String> roadSignsToDraw, int playerDistance) {
-        this.roadSigns = roadSignsToDraw;
+    public void updateSigns(int playerDistance) {
         this.playerDistance = playerDistance;
+        System.out.println("UPDATE ZNAKÓW");
+        for(Map.Entry<Integer, String> entry: roadSigns.entrySet()) {
+            System.out.println(entry.getKey()+": "+entry.getValue());
+        }
+        System.out.println(playerDistance);
     }
 
     public void draw(Map<Integer, String> roadSigns, int playerDistance) {
-        updateSigns(roadSigns, playerDistance);
+        updateSigns(playerDistance);
         repaint();
     }
 
@@ -36,9 +40,19 @@ public class GreenLane extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         for(Map.Entry<Integer, String> entry: roadSigns.entrySet()) {
-            int y = getHeight() - (entry.getKey() - playerDistance + 60);
-            int x = 0;
-            g.drawString(entry.getValue(), x, y);
+            int y = getHeight() - ((entry.getKey() - playerDistance)/MyGameFrame.SCALE + MyGameFrame.CAR_PIXELS);
+            if( y>0 && y<getHeight()) {
+                int x = 0;
+                Font f = new Font("Verdana", Font.BOLD, 20);
+                g.setFont(f);
+                g.setColor(new Color(255, 255, 255));
+                g.fillRect(0, y, getFontMetrics(f).stringWidth(entry.getValue() + 2), getFontMetrics(f).getHeight() + 2);
+                g.setColor(new Color(0, 0, 0));
+                g.drawString(entry.getValue(), x + 1, y + 20);
+                g.setColor(new Color(255, 255, 255));
+                int xcenter = (getFontMetrics(f).stringWidth(entry.getValue() + 2)) / 2;
+                g.drawLine(xcenter, y + 21, xcenter, y + 50);
+            }
         }
 
 //        for(Map.Entry<Integer, String> entry: roadSigns.entrySet()) {

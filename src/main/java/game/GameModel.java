@@ -19,7 +19,7 @@ public class GameModel {
     private MyCollisionListener collisionListener;
     private MyFinishListener finishListener;
 
-    public static final int internalLengthUnitSize = 128;
+    public static final int internalLengthUnitSize = 256;
 
     public GameModel(MainMenu mainMenu, TracksMenu tracksMenu,
                      CollisionMenu collisionMenu, TrackCompletedMenu trackCompletedMenu,
@@ -104,7 +104,9 @@ public class GameModel {
         currentRoute.setDistance(currentRoute.getDistance()*internalLengthUnitSize);
         Map<Integer, String> map = currentRoute.getRoadSigns();
         Map<Integer, String> newMap = new TreeMap<>();
+        System.out.println("KONSTRUKCJA MAPY");
         for(int i: map.keySet()) {
+            System.out.println(i+": "+map.get(i));
             newMap.put(i*internalLengthUnitSize, map.get(i));
         }
         currentRoute.setRoadSigns(newMap);
@@ -138,14 +140,13 @@ public class GameModel {
             if(ind < otherCarsLeft.size() - 1) {
                 OtherCar nextCar = otherCarsLeft.get(ind+1);
                 int diff = car.getMetersFromStart() - nextCar.getMetersFromStart();
-                if(diff < 512 + Math.random()*200 - 100)
-                    car.brake(2);
+                if(diff < 1024 + Math.random()*200 - 100)
+                    car.brake(5);
                 else {
-                    if(diff < 1024 + Math.random()*200 - 100)
-                        car.brake(1);
+                    if(diff < 2048 + Math.random()*200 - 100)
+                        car.brake(2);
                     else {
-                        if (diff > 2048 + Math.random() * 200 - 100)
-                            car.accelerate();
+                        car.accelerate();
                     }
                 }
             }
@@ -160,14 +161,13 @@ public class GameModel {
             if(ind < otherCarsRight.size() - 1) {
                 OtherCar nextCar = otherCarsRight.get(ind+1);
                 int diff = nextCar.getMetersFromStart() - car.getMetersFromStart();
-                if(diff < 512 + Math.random()*200 - 100)
-                    car.brake(2);
+                if(diff < 1024 + Math.random()*200 - 100)
+                    car.brake(5);
                 else {
-                    if(diff < 1024 + Math.random()*200 - 100)
-                        car.brake(1);
+                    if(diff < 2048 + Math.random()*200 - 100)
+                        car.brake(2);
                     else {
-                        if (diff > 2048 + Math.random() * 200 - 100)
-                            car.accelerate();
+                        car.accelerate();
                     }
                 }
             }

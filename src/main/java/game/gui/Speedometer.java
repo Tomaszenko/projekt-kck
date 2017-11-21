@@ -13,7 +13,7 @@ public class Speedometer extends JLabel {
     }
 
     public Speedometer(int speed) {
-        this("Speed: " + String.valueOf(speed) + "km/h");
+        this("Prędkość: " + String.valueOf(speed) + "km/h");
     }
 
     public void updateSpeed(int currentSpeed) {
@@ -21,7 +21,7 @@ public class Speedometer extends JLabel {
     }
 
     private String makeTextOfSpeed(int speed) {
-        return "Speed: " + String.valueOf(speed) + "km/h";
+        return "Prędkość: " + String.valueOf(speed) + "km/h";
     }
 
     public void draw(int speed) {

@@ -43,11 +43,11 @@ public class RandomCarsGenerator {
     }
 
     private int generateRandomDistanceFromStart(int currentDistance, int totalDistance) {
-        return currentDistance + (int) ((Math.random()*0.03 + 0.02)*totalDistance);
+        return currentDistance + (int) ((Math.random()*0.01 + 0.01)*totalDistance);
     }
 
     private int generateRandomMaxSpeed() {
-        return (int)(Math.random()*80) + 100;
+        return (int)(Math.random()*50) + 80;
     }
 
     private int generateRandomSpeed(int maxSpeed) {
@@ -60,7 +60,7 @@ public class RandomCarsGenerator {
     }
 
     private CarLane generateRandomCarLane() {
-        return CarLane.values()[Math.random()>0.5?1:0];
+        return CarLane.values()[Math.random()>0.7?0:1];
     }
 
     private CarDirection generateRandomCarDirection() {

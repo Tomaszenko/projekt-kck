@@ -4,18 +4,22 @@ import game.GameModel;
 import game.GameState;
 import game.GameView;
 import game.MyKeyListener;
-import javafx.event.EventType;
-import javafx.stage.Stage;
 
-import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GraphicsGuiRenderer extends GameView {
     private MyGameFrame gameFrame;
+    private Robot robot;
 //    private Stage stage;
+
     private GameState previousState = null;
+
+    private Set<Integer> events = new HashSet<>();
 
     public GraphicsGuiRenderer(MyKeyListener keyListener) {
         super(keyListener);
@@ -23,6 +27,7 @@ public class GraphicsGuiRenderer extends GameView {
 
     private void registerListeners() {
         gameFrame.addKeyListener(new KeyListener() {
+
             @Override
             public void keyTyped(KeyEvent e) {
 
@@ -31,34 +36,39 @@ public class GraphicsGuiRenderer extends GameView {
             @Override
             public void keyPressed(KeyEvent e) {
                 System.out.println("System key pressed");
-                int keyCode = e.getKeyCode();
-                switch (keyCode) {
-                    case KeyEvent.VK_UP:
-                        getKeyListener().up();
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        getKeyListener().down();
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        getKeyListener().left();
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        getKeyListener().right();
-                        break;
-                    case KeyEvent.VK_ESCAPE:
-                        getKeyListener().escape();
-                        break;
-                    case KeyEvent.VK_ENTER:
-                        getKeyListener().enter();
-                        break;
-                    default:
-                        break;
+                events.add(e.getKeyCode());
+
+                for(Integer event: events) {
+                    switch(event) {
+                        case KeyEvent.VK_UP:
+                            getKeyListener().up();
+                            break;
+                        case KeyEvent.VK_DOWN:
+                            getKeyListener().down();
+                            break;
+                        case KeyEvent.VK_LEFT:
+                            getKeyListener().left();
+                            break;
+                        case KeyEvent.VK_RIGHT:
+                            getKeyListener().right();
+                            break;
+                        case KeyEvent.VK_ESCAPE:
+                            getKeyListener().escape();
+                            break;
+                        case KeyEvent.VK_ENTER:
+                            getKeyListener().enter();
+                            break;
+                        case KeyEvent.VK_SPACE:
+                            getKeyListener().space();
+                            break;
+                    }
                 }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-
+                System.out.println("System key released");
+                events.remove(e.getKeyCode());
             }
         });
     }
